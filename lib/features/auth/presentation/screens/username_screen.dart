@@ -72,7 +72,6 @@ class _UsernameScreenState extends State<UsernameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
@@ -80,7 +79,6 @@ class _UsernameScreenState extends State<UsernameScreen> {
             children: [
               Text(
                 'Enter your username',
-                style: TextStyle(fontSize: 30, fontWeight: .w600),
               ),
               const SizedBox(height: 40),
               TextField(
@@ -97,7 +95,6 @@ class _UsernameScreenState extends State<UsernameScreen> {
                               height: 18,
                               width: 18,
                               child: CircularProgressIndicator(
-                                color: Colors.black,
                               ),
                             ),
                           ),
@@ -109,11 +106,11 @@ class _UsernameScreenState extends State<UsernameScreen> {
                       : const Icon(Icons.close, color: Colors.red),
                   hintText: 'username',
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black, width: 2),
+                    borderSide: BorderSide(width: 2),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black, width: 2),
+                    borderSide: BorderSide(width: 2),
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
@@ -129,9 +126,6 @@ class _UsernameScreenState extends State<UsernameScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                  ),
                   onPressed: _isUnique == true && !_isLoading
                       ? () async {
                           final username = _controller.text.trim();
@@ -144,10 +138,7 @@ class _UsernameScreenState extends State<UsernameScreen> {
                           }
                         }
                       : null,
-                  child: Text(
-                    'Continue',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                  child: Text('Continue'),
                 ),
               ),
             ],

@@ -20,9 +20,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return BlocProvider(
       create: (_) => AuthBloc(GetIt.I<AuthRepository>()),
       child: Scaffold(
-        backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Colors.white,
           actions: [
             Builder(
               builder: (newContext) {

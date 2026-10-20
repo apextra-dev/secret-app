@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -18,21 +19,22 @@ class AuthService extends ChangeNotifier {
 
       if (user != null) {
         try {
-          final snapshot =
-              await FirebaseDatabase.instanceFor(
-                    app: Firebase.app(),
-                    databaseURL:
-                        'https://post-auth-42085-default-rtdb.europe-west1.firebasedatabase.app',
-                  )
-                  .ref('users/${user.uid}/username')
-                  .get()
-                  .timeout(
-                    const Duration(seconds: 3),
-                  );
-          _username = snapshot.value as String?;
+          final snapshot = await FirebaseDatabase.instanceFor(
+            app: Firebase.app(),
+            databaseURL:
+                'https://post-auth-42085-default-rtdb.europe-west1.firebasedatabase.app',
+          ).ref('users/${user.uid}/username').get().timeout(const Duration(seconds: 3));
+          if (snapshot.exists && snapshot.value != null) {
+            _username = snapshot.value as String?;
+
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString('cache_username_${user.uid}', _username!);
+          } else {
+            _username = null;
+          }
         } catch (e) {
-          print(e);
-          _username = null;
+          final prefs = await SharedPreferences.getInstance();
+          _username = prefs.getString('cache_username_${user!.uid}');
         }
       } else {
         _username = null;
@@ -43,25 +45,28 @@ class AuthService extends ChangeNotifier {
     });
   }
 
-Future<void> saveUsername(String originalUsername) async {
-  final uid = _auth.currentUser?.uid;
-  if (uid == null) return;
+  Future<void> saveUsername(String originalUsername) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
 
-  final lowercaseUsername = originalUsername.toLowerCase(); 
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('cache_username_${uid}', originalUsername);
 
-  final db = FirebaseDatabase.instanceFor(
-    app: Firebase.app(),
-    databaseURL: 'https://post-auth-42085-default-rtdb.europe-west1.firebasedatabase.app',
-  );
+    final lowercaseUsername = originalUsername.toLowerCase();
+    final db = FirebaseDatabase.instanceFor(
+      app: Firebase.app(),
+      databaseURL:
+          'https://post-auth-42085-default-rtdb.europe-west1.firebasedatabase.app',
+    );
 
-  await db.ref().update({
-    'users/$uid/username': originalUsername,
-    'usernames/$lowercaseUsername': uid,        
-  });
+    await db.ref().update({
+      'users/$uid/username': originalUsername,
+      'usernames/$lowercaseUsername': uid,
+    });
 
-  _username = originalUsername;
-  notifyListeners(); 
-}
+    _username = originalUsername;
+    notifyListeners();
+  }
 
   bool get isLoggedIn => _user != null;
   bool get isInitialized => _isInitialized;

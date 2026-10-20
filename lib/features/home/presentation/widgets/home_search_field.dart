@@ -95,8 +95,13 @@ class _HomeSearchFieldState extends State<HomeSearchField> {
             onChanged: _onChangeText,
             decoration: InputDecoration(
               filled: true,
-              fillColor: const Color(0x64EBEBEB),
-              prefixIcon: Icon(Icons.search),
+              prefixIcon: Icon(Icons.search, color: Colors.grey),
+              suffixIcon: IconButton(
+                onPressed: () {
+                  _controller.clear();
+                },
+                icon: Icon(Icons.cancel, color: Colors.grey),
+              ),
               hintText: 'Search...',
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(30),
@@ -110,7 +115,7 @@ class _HomeSearchFieldState extends State<HomeSearchField> {
           ),
         ),
         if (_searchResults.isNotEmpty)
-          Container(
+          SizedBox(
             height: 100,
             child: ListView.builder(
               shrinkWrap: true,
@@ -119,11 +124,7 @@ class _HomeSearchFieldState extends State<HomeSearchField> {
                 final user = _searchResults[index];
                 return ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: Colors.black,
-                    child: Text(
-                      user['name']![0],
-                      style: TextStyle(color: Colors.white),
-                    ),
+                    child: Text(user['name']![0]),
                   ),
                   title: Text(user['name']!),
                   subtitle: Text('@${user['username']}'),
@@ -134,8 +135,9 @@ class _HomeSearchFieldState extends State<HomeSearchField> {
 
                     if (myUid == null ||
                         partnerUid == null ||
-                        partnerName == null)
+                        partnerName == null) {
                       return;
+                    }
 
                     final List<String> uids = [myUid, partnerUid];
                     uids.sort();

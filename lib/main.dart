@@ -1,11 +1,12 @@
 import 'dart:developer';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:secret/app.dart';
+import 'package:secret/core/network/user_state_network.dart';
 import 'package:secret/core/service/auth_service.dart';
 import 'package:secret/features/auth/data/data_sources/auth_data_source.dart';
 import 'package:secret/features/auth/data/repositories/auth_repository_impl.dart';
@@ -13,15 +14,18 @@ import 'package:secret/features/auth/domain/repositories/auth_repository.dart';
 import 'package:secret/features/chat/data/data_sources/chat_data_source.dart';
 import 'package:secret/features/chat/data/repositories/chat_repository_impl.dart';
 import 'package:secret/features/chat/domain/repositories/chat_repository.dart';
+import 'package:secret/features/home/service/chat_selection_service.dart';
 import 'package:secret/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  final messaging = await FirebaseMessaging.instance;
+  FirebaseDatabase.instance.setPersistenceEnabled(true);
+
+  final messaging = FirebaseMessaging.instance;
   messaging.getToken().then(((token) => log(token ?? 'No token')));
-  
+
   GetIt.I.registerLazySingleton<ChatRepository>(
     () => ChatRepositoryImpl(dataSource: ChatDataSource()),
   );
@@ -29,6 +33,10 @@ void main() async {
     () => AuthRepositoryImpl(dataSource: AuthDataSource()),
   );
   GetIt.I.registerSingleton<AuthService>(AuthService());
+
+  GetIt.I.registerSingleton<UserStateNetwork>(UserStateNetwork());
+
+  GetIt.I.registerLazySingleton<ChatSelectionService>(() => ChatSelectionService());
 
   runApp(SecretApp());
 }

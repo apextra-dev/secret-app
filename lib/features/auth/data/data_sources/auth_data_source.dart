@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:get_it/get_it.dart';
+import 'package:secret/core/network/user_state_network.dart';
 
 class AuthDataSource {
   final _auth = FirebaseAuth.instance;
@@ -12,15 +14,15 @@ class AuthDataSource {
 
       await userCredential.user?.updateDisplayName(name);
 
-      final _uid = userCredential.user?.uid;
+      final uid = userCredential.user?.uid;
 
-      final _ref = FirebaseDatabase.instanceFor(
+      final ref = FirebaseDatabase.instanceFor(
         app: Firebase.app(),
         databaseURL:
             'https://post-auth-42085-default-rtdb.europe-west1.firebasedatabase.app',
-      ).ref('users/$_uid');
+      ).ref('users/$uid');
 
-      await _ref.set({
+      await ref.set({
         'name': name,
         'email': email,
       });
@@ -31,6 +33,7 @@ class AuthDataSource {
 
   Future<void> signOut() async {
     try {
+      GetIt.I<UserStateNetwork>().stopTracking();
       await _auth.signOut();
     } catch (e) {
       throw '$e';

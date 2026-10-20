@@ -26,7 +26,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: BlocProvider(
         create: (_) => AuthBloc(GetIt.I<AuthRepository>()),
         child: SafeArea(
@@ -36,10 +35,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               key: _formKey,
               child: Column(
                 children: [
-                  Text(
-                    'Sign Up',
-                    style: TextStyle(fontSize: 34, fontWeight: .w600),
-                  ),
+                  Text('Sign Up'),
                   const SizedBox(height: 50),
                   TextFormField(
                     validator: (value) {
@@ -53,11 +49,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       hintText: 'Enter name...',
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.black, width: 2),
+                        borderSide: BorderSide(width: 2),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.black, width: 2),
+                        borderSide: BorderSide(width: 2),
                       ),
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
@@ -82,11 +78,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       hintText: 'Enter email...',
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.black, width: 2),
+                        borderSide: BorderSide(width: 2),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.black, width: 2),
+                        borderSide: BorderSide(width: 2),
                       ),
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
@@ -124,11 +120,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       hintText: 'Enter password...',
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.black, width: 2),
+                        borderSide: BorderSide(width: 2),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.black, width: 2),
+                        borderSide: BorderSide(width: 2),
                       ),
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
@@ -142,20 +138,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     child: Builder(
                       builder: (newContext) {
                         return ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                          ),
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              final _name = _nameController.text.trim();
-                              final _email = _emailController.text.trim();
-                              final _password = _passwordController.text.trim();
+                              final name = _nameController.text.trim();
+                              final email = _emailController.text.trim();
+                              final password = _passwordController.text.trim();
 
                               newContext.read<AuthBloc>().add(
                                 CreateUser(
-                                  name: _name,
-                                  email: _email,
-                                  password: _password,
+                                  name: name,
+                                  email: email,
+                                  password: password,
                                 ),
                               );
                             }
@@ -164,12 +157,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             builder: (context, state) {
                               if (state is AuthLoading) {
                                 return const CircularProgressIndicator(
-                                  color: Colors.white,
                                 );
                               }
                               return const Text(
                                 'SignUp',
-                                style: TextStyle(color: Colors.white),
                               );
                             },
                           ),

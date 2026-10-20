@@ -19,6 +19,10 @@ dependencies:
   go_router: ^18.0.2
   flutter_launcher_icons: ^0.14.4
   firebase_messaging: ^16.7.0
+  shared_preferences: ^2.5.6
+  intl: ^0.20.3
+  flutter_svg: ^2.3.0
+  equatable: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -37,9 +41,13 @@ flutter:
 
   assets:
     - assets/images/app_icon/
+    - assets/images/settings/
 
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter.ttf
+    - family: Rajdhani-Regular
+      fonts:
+        - asset: assets/fonts/Rajdhani-Regular.ttf
 

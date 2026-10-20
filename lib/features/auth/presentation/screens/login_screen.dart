@@ -27,7 +27,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocProvider(
       create: (context) => AuthBloc(GetIt.I<AuthRepository>()),
       child: Scaffold(
-        backgroundColor: Colors.white,
         body: SafeArea(
           child: SingleChildScrollView(
             padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
@@ -35,10 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
               key: _formKey,
               child: Column(
                 children: [
-                  Text(
-                    'Sign In',
-                    style: TextStyle(fontSize: 34, fontWeight: .w600),
-                  ),
+                  Text('Sign In',),
                   const SizedBox(height: 50),
                   TextFormField(
                     controller: _emailController,
@@ -46,9 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (value == null || value.trim().isEmpty) {
                         return 'Empty input';
                       }
-                      final regExp = RegExp(
-                        r'^(?=.*[A-Za-z])(?=.*\d).{6,}$',
-                      );
+                      final regExp = RegExp(r'^(?=.*[A-Za-z])(?=.*\d).{6,}$');
                       if (!regExp.hasMatch(value)) {
                         return 'Enter correct email';
                       }
@@ -58,11 +52,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       hintText: 'Enter email...',
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.black, width: 2),
+                        borderSide: BorderSide(width: 2),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.black, width: 2),
+                        borderSide: BorderSide(width: 2),
                       ),
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
@@ -100,11 +94,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       hintText: 'Enter password...',
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.black, width: 2),
+                        borderSide: BorderSide(width: 2),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.black, width: 2),
+                        borderSide: BorderSide(width: 2),
                       ),
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
@@ -118,16 +112,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Builder(
                       builder: (newContext) {
                         return ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                          ),
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              final _email = _emailController.text.trim();
-                              final _password = _passwordController.text.trim();
+                              final email = _emailController.text.trim();
+                              final password = _passwordController.text.trim();
 
                               newContext.read<AuthBloc>().add(
-                                SignInUser(email: _email, password: _password),
+                                SignInUser(email: email, password: password),
                               );
                             }
                           },
@@ -135,12 +126,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             builder: (context, state) {
                               if (state is AuthLoading) {
                                 return const CircularProgressIndicator(
-                                  color: Colors.white,
                                 );
                               }
                               return const Text(
                                 'SignIn',
-                                style: TextStyle(color: Colors.white),
                               );
                             },
                           ),

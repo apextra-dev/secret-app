@@ -18,17 +18,12 @@ class ProfileSettings extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 70,
-            backgroundColor: Colors.black,
             child: Text(
               userDisplayName[0],
-              style: TextStyle(color: Colors.white, fontSize: 50),
             ),
           ),
           const SizedBox(height: 10),
-          Text(
-            userDisplayName,
-            style: TextStyle(fontSize: 30, fontWeight: .w500),
-          ),
+          Text(userDisplayName,),
           Text('@$username'),
         ],
       ),
