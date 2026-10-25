@@ -18,7 +18,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final username = FirebaseAuth.instance.currentUser?.displayName ?? 'User';
+  final name = FirebaseAuth.instance.currentUser?.displayName ?? 'User';
 
   final selectionService = GetIt.I<ChatSelectionService>();
 
@@ -31,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
         final selectedCount = selectionService.selectedPartnerIds.length;
 
         return Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           extendBodyBehindAppBar: true,
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -56,11 +57,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           )
                         : IconButton(
                             onPressed: () {
-                              context.push('/profile');
+                              context.push('/profile/$name');
                             },
                             icon: CircleAvatar(
                               child: Text(
-                                username[0],
+                                name[0],
                               ),
                             ),
                           ),
@@ -87,6 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     duration: const Duration(milliseconds: 200),
                                     child: Text(
                                       isConnected ? 'Secret' : 'Connecting...',
+                                      style: TextStyle(fontFamily: 'Rajdhani-Regular'),
                                       key: ValueKey(isConnected),
                                     ),
                                   ),

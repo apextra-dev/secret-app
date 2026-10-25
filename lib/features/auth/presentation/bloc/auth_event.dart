@@ -16,3 +16,21 @@ class SignInUser extends AuthEvent {
 
   SignInUser({required this.email, required this.password});
 }
+
+class OnTypingChanged extends AuthEvent {
+  String text;
+
+  OnTypingChanged({required this.text});
+}
+
+class ChangeProfileInfo extends AuthEvent {
+  String name;
+  String oldUsername;
+  String newUsername;
+
+  ChangeProfileInfo({
+    required this.name,
+    required this.oldUsername,
+    required this.newUsername,
+  });
+}

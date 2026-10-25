@@ -9,10 +9,13 @@ import 'package:secret/features/auth/presentation/screens/register_screen.dart';
 import 'package:secret/features/auth/presentation/screens/username_screen.dart';
 import 'package:secret/features/chat/presentation/screens/chat_screen.dart';
 import 'package:secret/features/home/presentation/screens/home_screen.dart';
+import 'package:secret/features/profile/presentation/screens/partner_profile_screen.dart';
 import 'package:secret/features/profile/presentation/screens/profile_screen.dart';
 import 'package:secret/features/settings/presentation/screens/settings_screen.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'root',
+);
 
 final appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
@@ -68,7 +71,26 @@ final appRouter = GoRouter(
     GoRoute(path: '/register', builder: (context, state) => RegisterScreen()),
     GoRoute(path: '/username', builder: (context, state) => UsernameScreen()),
     GoRoute(path: '/login', builder: (context, state) => LoginScreen()),
-    GoRoute(path: '/profile', builder: (context, state) => ProfileScreen()),
+    GoRoute(
+      path: '/profile/:name',
+      builder: (context, state) {
+        final name = state.pathParameters['name'];
+        return ProfileScreen(name: name);
+      },
+    ),
+    GoRoute(
+      path: '/partner_profile/:partnerId/:partnerName',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final partnerId = state.pathParameters['partnerId']!;
+        final partnerName = state.pathParameters['partnerName']!;
+
+        return PartnerProfileScreen(
+          partnerId: partnerId,
+          partnerName: partnerName,
+        );
+      },
+    ),
     StatefulShellRoute.indexedStack(
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state, navigationShell) {

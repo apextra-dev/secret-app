@@ -85,6 +85,14 @@ class _HomeSearchFieldState extends State<HomeSearchField> {
   }
 
   @override
+  void dispose() {
+    _searchResults.clear();
+    _controller.dispose();
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -123,9 +131,7 @@ class _HomeSearchFieldState extends State<HomeSearchField> {
               itemBuilder: (context, index) {
                 final user = _searchResults[index];
                 return ListTile(
-                  leading: CircleAvatar(
-                    child: Text(user['name']![0]),
-                  ),
+                  leading: CircleAvatar(child: Text(user['name']![0])),
                   title: Text(user['name']!),
                   subtitle: Text('@${user['username']}'),
                   onTap: () {

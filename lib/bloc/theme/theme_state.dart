@@ -1,7 +1,7 @@
 part of 'theme_cubit.dart';
 
 class ThemeState extends Equatable {
-  ThemeState({required this.brightness});
+  const ThemeState({required this.brightness});
 
   final Brightness brightness;
 

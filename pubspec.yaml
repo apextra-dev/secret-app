@@ -1,7 +1,7 @@
 name: secret
 description: "Simple messanger"
 publish_to: 'none' 
-version: 1.0.0+1
+version: 0.1.5
 
 environment:
   sdk: ^3.12.2
@@ -23,6 +23,9 @@ dependencies:
   intl: ^0.20.3
   flutter_svg: ^2.3.0
   equatable: ^3.0.0
+  rxdart: ^0.28.0
+  bloc_concurrency: ^0.3.0
+  stream_transform: ^2.1.2
 
 dev_dependencies:
   flutter_test:
@@ -42,6 +45,10 @@ flutter:
   assets:
     - assets/images/app_icon/
     - assets/images/settings/
+    - assets/images/auth/
+    - assets/images/nav/
+    - assets/images/partner_profile/
+    - assets/images/chat/
 
   fonts:
     - family: Inter

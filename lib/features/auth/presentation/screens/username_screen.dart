@@ -1,10 +1,12 @@
-import 'dart:async';
-
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get_it/get_it.dart';
 import 'package:secret/core/service/auth_service.dart';
+import 'package:secret/features/auth/domain/repositories/auth_repository.dart';
+import 'package:secret/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:secret/features/auth/presentation/bloc/auth_event.dart';
+import 'package:secret/features/auth/presentation/bloc/auth_state.dart';
 
 class UsernameScreen extends StatefulWidget {
   const UsernameScreen({super.key});
@@ -15,133 +17,179 @@ class UsernameScreen extends StatefulWidget {
 
 class _UsernameScreenState extends State<UsernameScreen> {
   final TextEditingController _controller = TextEditingController();
-  Timer? _debounce;
-
-  bool _isLoading = false;
-  bool? _isUnique;
-
-  void _onTextChanged(String text) {
-    final username = text.trim().toLowerCase();
-
-    setState(() {
-      _isUnique = null;
-    });
-
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-
-    final regExp = RegExp('^[a-zA-Z0-9_]+\$');
-
-    if (username.length < 3) return;
-    if (!regExp.hasMatch(username)) return;
-
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      if (username.isNotEmpty) {
-        _checkUniqueness(username);
-      }
-    });
-  }
-
-  void _checkUniqueness(String username) async {
-    setState(() => _isLoading = true);
-
-    try {
-      final snapshot = await FirebaseDatabase.instanceFor(
-        app: Firebase.app(),
-        databaseURL:
-            'https://post-auth-42085-default-rtdb.europe-west1.firebasedatabase.app',
-      ).ref('usernames/$username').get();
-
-      setState(() {
-        _isUnique = snapshot.value == null;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
 
   @override
   void dispose() {
-    _debounce?.cancel();
     _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-          child: Column(
-            children: [
-              Text(
-                'Enter your username',
-              ),
-              const SizedBox(height: 40),
-              TextField(
-                onChanged: _onTextChanged,
-                controller: _controller,
-                decoration: InputDecoration(
-                  prefixText: '@',
-                  suffixIcon: _isLoading
-                      ? Padding(
-                          padding: const EdgeInsets.only(right: 20),
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: SizedBox(
-                              height: 18,
-                              width: 18,
-                              child: CircularProgressIndicator(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final _authService = GetIt.I<AuthService>();
+
+    return BlocProvider(
+      create: (context) => AuthBloc(GetIt.I<AuthRepository>()),
+      child: Scaffold(
+        appBar: AppBar(
+          title: SvgPicture.asset(
+            isDark
+                ? 'assets/images/auth/darkTheme.svg'
+                : 'assets/images/auth/lightTheme.svg',
+            width: 55,
+            height: 55,
+          ),
+        ),
+        body: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 30,
+                  vertical: 20,
+                ),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight - 40,
+                  ),
+                  child: IntrinsicHeight(
+                    child: BlocBuilder<AuthBloc, AuthState>(
+                      builder: (context, state) {
+                        final isUnique = state is UsernameUnique;
+                        final isChecking = state is UsernameIsChecking;
+                        final isFailure = state is UsernameFailure;
+                        final isNotUnique = state is UsernameIsNotUnique;
+
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child: Text(
+                                'Enter your username',
+                                style: Theme.of(context).textTheme.displaySmall,
                               ),
                             ),
-                          ),
-                        )
-                      : _isUnique == null
-                      ? null
-                      : _isUnique!
-                      ? const Icon(Icons.check, color: Colors.green)
-                      : const Icon(Icons.close, color: Colors.red),
-                  hintText: 'username',
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(width: 2),
-                    borderRadius: BorderRadius.circular(20),
+                            const SizedBox(height: 60),
+                            TextField(
+                              controller: _controller,
+                              onChanged: (text) {
+                                context.read<AuthBloc>().add(
+                                  OnTypingChanged(text: text),
+                                );
+                              },
+                              decoration: InputDecoration(
+                                prefixText: '@',
+                                hintText: 'username',
+                                filled: true,
+                                suffixIcon: isChecking
+                                    ? const Padding(
+                                        padding: EdgeInsets.all(12.0),
+                                        child: SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        ),
+                                      )
+                                    : isUnique
+                                    ? const Icon(
+                                        Icons.check_circle,
+                                        color: Colors.green,
+                                      )
+                                    : null,
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: isNotUnique || isFailure
+                                        ? Colors.red
+                                        : isDark
+                                        ? Colors.transparent
+                                        : Colors.black12,
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: isUnique
+                                        ? Colors.green
+                                        : isNotUnique || isFailure
+                                        ? Colors.red
+                                        : Theme.of(context).primaryColor,
+                                    width: 1.5,
+                                  ),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            SizedBox(
+                              height: 24,
+                              child: Builder(
+                                builder: (context) {
+                                  if (isNotUnique) {
+                                    return Text(
+                                      'Username ${_controller.text.trim()} is not available',
+                                      style: const TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 13,
+                                      ),
+                                    );
+                                  }
+                                  if (isFailure) {
+                                    return Text(
+                                      state.message,
+                                      style: const TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 13,
+                                      ),
+                                    );
+                                  }
+                                  if (isUnique) {
+                                    return const Text(
+                                      'Username is available!',
+                                      style: TextStyle(
+                                        color: Colors.green,
+                                        fontSize: 13,
+                                      ),
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: isUnique
+                                    ? () {
+                                        _authService.saveUsername(
+                                          _controller.text.trim(),
+                                        );
+                                      }
+                                    : null,
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                ),
+                                child: const Text('Continue'),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(width: 2),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              if (_isUnique != null)
-                Text(
-                  _isUnique!
-                      ? 'This username is available'
-                      : 'This username is not available',
-                ),
-              const SizedBox(height: 30),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isUnique == true && !_isLoading
-                      ? () async {
-                          final username = _controller.text.trim();
-                          try {
-                            await GetIt.I<AuthService>().saveUsername(username);
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Something went wrong')),
-                            );
-                          }
-                        }
-                      : null,
-                  child: Text('Continue'),
-                ),
-              ),
-            ],
+              );
+            },
           ),
         ),
       ),

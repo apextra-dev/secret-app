@@ -16,7 +16,7 @@ class _ProfileAlertDialogState extends State<ProfileAlertDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Center(child: Text('Sign Out',)),
+      title: Center(child: Text('Sign Out')),
       actions: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -29,10 +29,18 @@ class _ProfileAlertDialogState extends State<ProfileAlertDialog> {
               child: Text('Yes'),
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cance'),
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
             ),
           ],
         ),
