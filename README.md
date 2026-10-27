@@ -15,7 +15,7 @@ A lightweight, high-performance cross-platform instant messaging application bui
 - **Live User Presence & Statuses:** Dynamic, reactive UI indicators for user activity (`online`, `typing...`, `last seen recently`).
 - **Global User Search:** Instant contact discovery via unique `@username` queries with live Firebase database validation.
 - **Smart UI Placeholders:** Performance-optimized dynamic letter-avatar generation for a lightweight client-side footprint.
-- **Modern UX:** Sleek, fully responsive Dark Mode interface with custom chat wallpapers.
+- **Modern UX:** Sleek, fully responsive Dark and Light Modes interface.
 
 ## 🛠️ Tech Stack
 
@@ -28,7 +28,7 @@ A lightweight, high-performance cross-platform instant messaging application bui
 
 - **Reactive Stream Architecture:** Fully utilized Dart Streams and Firebase Realtime Database listeners to establish a persistent bi-directional connection. This ensures sub-second latency for message delivery and instantaneous UI updates.
 - **Efficient Presence System:** Implemented a lightweight user presence tracking system that updates user statuses (`online`/`typing`) globally without triggering unnecessary widget rebuilds or high CPU overhead.
-- **Optimized Performance:** Utilized dynamic Flutter-native CustomPaint/Container shapes for initials-based avatars instead of heavy network image assets, drastically reducing network payloads and ensuring 60 FPS scrolling.
+- **Optimized Performance:** Utilized dynamic Flutter-native shapes for initials-based avatars instead of heavy network image assets, drastically reducing network payloads and ensuring 60 FPS scrolling.
 
 ## 🔧 Installation & Setup
 
