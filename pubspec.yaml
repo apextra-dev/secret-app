@@ -1,5 +1,5 @@
 name: secret
-description: "Simple messanger"
+description: "Simple messenger"
 publish_to: 'none' 
 version: 0.1.5
 
