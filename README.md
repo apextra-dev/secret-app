@@ -5,7 +5,7 @@
   <img src="./assets/images/app_icon/finding_screen.jpg" width="30%" alt="Find your friends" />
 </p>
 
-# Real-Time Messaging App (MVP)
+# Secret Messenger (MVP)
 
 A lightweight, high-performance cross-platform instant messaging application built with Flutter and powered by Firebase. This project serves as a production-ready Minimum Viable Product (MVP), demonstrating efficient reactive state management, real-time data streaming, and serverless NoSQL database architecture.
 
