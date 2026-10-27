@@ -38,7 +38,11 @@ cd secret-app
 flutter pub get
 
 # Run the app on your connected device/emulator
-flutter run or flutter build apk --release for real Android Phone
+flutter run
+
+# You can build apk file for real Android Phone
+flutter build apk --release
+
 ```
 
 ---
